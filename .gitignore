@@ -1,0 +1,63 @@
+*.wav
+
+
+### LaTeX ###
+# ignore all the files created by Latex in this folder and the sub folders
+
+*.aux
+*.bbl
+*.blg
+*.bcf
+*.dvi
+*.log
+*.toc
+*.tps
+*.run.xml
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.asc
+*.ilg
+*.ind
+*.toc
+
+*.bib.bak
+*.bib.sav
+
+Diskussion/*.pdf
+*.out
+
+# TexMaker files
+*.synctex.gz
+
+# Matlab
+*.m~
+
+### OSX ###
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
