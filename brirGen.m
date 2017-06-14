@@ -12,7 +12,7 @@ function [ brirL, brirR, rir, beta ] = brirGen( c, fs, receiverPos, sourcePos, r
 %       sourcePos       -       position of the source in the room [x y z] (m)
 %       roomDim         -       room dimensions [x y z] (m) 
 %       beta            -       reverberation time (s) or reflection
-%                               coefficients for each wall [x1 x2 y1 y2 z1 z2]
+%                               IR's for each wall [N 6], N = length of IR
 %       nSamples        -       length of the RIR in samples
 %
 % OUTPUT:
@@ -21,11 +21,12 @@ function [ brirL, brirR, rir, beta ] = brirGen( c, fs, receiverPos, sourcePos, r
 %                               [x1 x2 y1 y2 z1 z2]
 %%
 
-if length(beta) < 6
+if length(beta) == 1
     beta = reverbTime2reflectionCoeff(roomDim, beta, c);
-else
-    beta = beta(:);
+%else
+%    beta = beta(:);
 end
+
 % transform input from time to sample domain
 cSamples = c/fs;
 receiverPos = receiverPos(:)./cSamples;
@@ -42,7 +43,7 @@ n3 = ceil(nSamples/(2*roomDim(3)));
 % holds relative distance from source to receiver
 ismPosRel = zeros(3,1);
 % holds reflector coefficients
-refl = zeros(3,1);
+refl = zeros(length(beta),3);
 
 for l = -n1:n1
     rX = 2*l*roomDim(1);
@@ -52,25 +53,26 @@ for l = -n1:n1
             rZ = 2*n*roomDim(3);
             for u = 0:1
                 ismPosRel(1) = (1-2*u)*sourcePos(1) + rX - receiverPos(1);
-                refl(1) = beta(1)^abs(u-l) * beta(2)^abs(l);
+                refl(:,1) = beta(:,1).^abs(u-l) .* beta(:,2).^abs(l);
                 for v = 0:1
                     ismPosRel(2) = (1-2*v)*sourcePos(2) + rY - receiverPos(2);
-                    refl(2) = beta(3)^abs(v-m) * beta(4)^abs(m);
+                    refl(:,2) = beta(:,3).^abs(v-m) .* beta(:,4).^abs(m);
                     for w = 0:1
                         ismPosRel(3) = (1-2*w)*sourcePos(3) + rZ - receiverPos(3);
-                        refl(3) = beta(5)^abs(w-n) * beta(6)^abs(n);
+                        refl(:,3) = beta(:,5).^abs(w-n) .* beta(:,6).^abs(n);
                         % relative source-receiver distance
                         d = norm(ismPosRel);
                         % determine gain (d*cSamples -> back to time
                         % domain)
-                        a = refl(1) * refl(2) * refl(3) / (4*pi*d*cSamples);
-                        if(floor(d) < nSamples)
+                        a = refl(:,1) .* refl(:,2) .* refl(:,3) ./ (4*pi*d*cSamples);
+                        a = ifft(a);
+                        if(floor(d) < nSamples-128)
                             % determine azimut and elevation of source
                             [az, el, ~] = cart2sph(ismPosRel(1),...
                                                    ismPosRel(2),...
                                                    ismPosRel(3));
                             deltaPulse = zeros(nSamples,1);
-                            deltaPulse(floor(d)) = a;
+                            deltaPulse(floor(d):floor(d)+127) = a;
                             % interpolate and load HRIR which matches the direction of the source
                             [hrirL, hrirR] = AKhrirInterpolation(rad2deg(az),...
                                                                 rad2deg(el),...
@@ -79,7 +81,7 @@ for l = -n1:n1
                             brirL = brirL + conv(deltaPulse, hrirL);
                             brirR = brirR + conv(deltaPulse, hrirR);
                             % add pulse to RIR
-                            rir(floor(d)) = rir(floor(d)) + a;
+                            rir(floor(d):floor(d)+127) = rir(floor(d):floor(d)+127) + a;
                         end
                     end
                 end
