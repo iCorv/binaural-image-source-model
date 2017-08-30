@@ -100,6 +100,11 @@ hpFilt = designfilt('highpassiir', 'FilterOrder', 2, ...
  
 rir = filter(hpFilt,rir); % apply filter to rir
 
+% normalize
+rir = rir./max(abs(rir));
+brirL = brirL./max(abs(brirL));
+brirR = brirR./max(abs(brirR));
+
 
 end
 
