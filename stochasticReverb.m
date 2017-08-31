@@ -1,4 +1,4 @@
-function [ resynthesized_impulseL resynthesized_impulseR ] = stochasticReverb(fBins, A, V, fs, c, plotFlag )
+function [ resynthesized_impulseL, resynthesized_impulseR ] = stochasticReverb(fBins, A, V, fs, c, plotFlag )
 
 % max reverberation time (frequency dependant)
 T = max(0.161 .* V./A);
@@ -16,10 +16,10 @@ w0 = 2*pi*550;
 w1 = 2*pi*2700;
 w = (2*pi).*fc;
 for i = 1:length(fc)
-    % find nearest frequency bin indice
-    [y, idx] = min(abs(fBins-fc(i)));
+    % linear interpolate A. If outside of intervall, extrapolate linear
+    A_interp = interp1(fBins, A, fc(i),'linear','extrap');
     % the time, speed of sound, and room properties that are contained in
-    delta = c*A(idx)/(8*V);
+    delta = c*A_interp/(8*V);
     % time vector
     t = linspace(0,T,length(whiteNoiseL));
     decay = exp(-delta.*t);

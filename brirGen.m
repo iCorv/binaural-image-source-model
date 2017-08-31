@@ -65,7 +65,7 @@ for l = -n1:n1
                         % determine gain (d*cSamples -> back to time
                         % domain)
                         a = refl(:,1) .* refl(:,2) .* refl(:,3) ./ (4*pi*d*cSamples);
-                        a = ifft(a);
+                        a = ifft(a,'symmetric');
                         if(floor(d) < nSamples-128)
                             % determine azimut and elevation of source
                             [az, el, ~] = cart2sph(ismPosRel(1),...
