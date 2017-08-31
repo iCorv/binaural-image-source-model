@@ -10,11 +10,7 @@ whiteNoiseR = noise(round(T*fs),1);
 % Filter signal
 [analyzed_impulseL, analyzer] = gfb_analyzer_process(analyzer, whiteNoiseL);
 [analyzed_impulseR, analyzer] = gfb_analyzer_process(analyzer, whiteNoiseR);
-% ear distance of 31.2cm
-w0 = 2*pi*550;
-% model the decreasing coherence for higher frequency due to the scattering
-w1 = 2*pi*2700;
-w = (2*pi).*fc;
+
 for i = 1:length(fc)
     % linear interpolate A. If outside of intervall, extrapolate linear
     A_interp = interp1(fBins, A, fc(i),'linear','extrap');
@@ -22,11 +18,20 @@ for i = 1:length(fc)
     delta = c*A_interp/(8*V);
     % time vector
     t = linspace(0,T,length(whiteNoiseL));
+    % decay of the RIR
     decay = exp(-delta.*t);
     analyzed_impulseL(i,:) =  analyzed_impulseL(i,:) .* decay;
     analyzed_impulseR(i,:) =  analyzed_impulseR(i,:) .* decay;
 end
 
+% ---- coherence of binaural signals in a diffuse sound field ----
+% ear distance of 31.2cm
+w0 = 2*pi*550;
+% model the decreasing coherence for higher frequency due to the scattering
+w1 = 2*pi*2700;
+w = (2*pi).*fc;
+% coherence of two signals in the case of a head that is introduced as a 
+% scattering object to the diffuse sound field
 gamma = sin(pi .* w ./ w0)./(pi.*w./w0) .* max(0,1-w./w1);
 H_beta = zeros(size(gamma));
 for i = 1:length(gamma)

@@ -76,7 +76,7 @@ for l = -n1:n1
                             % interpolate and load HRIR which matches the direction of the source
                             [hrirL, hrirR] = AKhrirInterpolation(rad2deg(az),...
                                                                 rad2deg(el),...
-                                                                0, 'measured_sh');
+                                                                0, 'modeled_sh');
                             % add HRIR pulse to BRIR's
                             brirL = brirL + conv(deltaPulse, hrirL);
                             brirR = brirR + conv(deltaPulse, hrirR);

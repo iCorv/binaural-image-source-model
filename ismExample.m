@@ -6,40 +6,41 @@ amtstart;
 
 %%
 clc;clear;
-c = 340;                    % sound velocity (m/s)
+c = 340;                        % sound velocity (m/s)
 % !always set 44.1kHz when working with FABIAN HRIR's!
-fs = 44100;                 % sample frequency (samples/s) 
-receiverPos = [1 2 2];      % receiver position [x y z] (m)
-sourcePos = [3 3.6 2];        % source position [x y z] (m)
-roomDim = [5 4 3];          % room dimensions [x y z] (m)
-%beta = ones(6,1)*0.8;      % reflection coefficients
-%beta = 0.2;                 % reverberation time (s)
+fs = 44100;                     % sample frequency (samples/s) 
+receiverPos = [1 2 2];          % receiver position [x y z] (m)
+sourcePos = [3 3.6 2];          % source position [x y z] (m)
+roomDim = [5 4 3];              % room dimensions [x y z] (m)
+% beta = 0.2;                   % reverberation time (s)
 
-
+% load a set of frequency dependant reflection coefficients
 alpha = roomAbsorption();
+% octave bins
 f = [125 250 500 1000 2000 4000 8000];
 N = 128;
+% construct minimum phase wall reflection spectra
 tWall = AKwallReflection(alpha, f, N, {'linear' 'linear', 'linear'}, 44100, 'min', true);
 beta = fft(tWall);
-
+% room surface
 S = 2*(roomDim(1)*roomDim(3)+roomDim(2)*roomDim(3)+roomDim(1)*roomDim(2));
+% room volume
 V = roomDim(1)*roomDim(2)*roomDim(3);
 % frequency wise equivalent absorption area
 A = alpha * [roomDim(2)*roomDim(3); roomDim(2)*roomDim(3); ...
     roomDim(1)*roomDim(3); roomDim(1)*roomDim(3); ...
     roomDim(1)*roomDim(2); roomDim(1)*roomDim(2)];
+% calculate stochastic reverb IR
 [stochasticIR_L, stochasticIR_R] = stochasticReverb(f,A,V,fs,c,false);
 Tmp = mixingTime(V, S) / 1000; % mixing time in s for stochastic reverb
-%%
 nSamples = round(fs*Tmp);   % Number of samples depending on mixing time
-
-%nSamples = 2000;
-
+% calculate IR till mixing time with ISM
 [brirL,brirR,rir,beta] = brirGen(c, fs, receiverPos, sourcePos, roomDim, beta, nSamples);
 
 figure;
 rir = [rir; zeros(255,1)];
-AKp([brirL brirR rir],'t2d','fs',44100);
+AKp([brirL brirR rir],'t2d','fs',fs);
+legend('BRIR left', 'BRIR right', 'RIR');
 
 %% mix with stochastic reverb
 % onset
@@ -60,6 +61,10 @@ brirR(numel(stochasticIR_R)) = 0;
 brirL_stochastic = brirL' + stochasticIR_L.*fadeInFunction(Tmp, fs, onsL, stochasticIR_L, 'linear');
 brirR_stochastic = brirR' + stochasticIR_R.*fadeInFunction(Tmp, fs, onsR, stochasticIR_R, 'linear');
 
+figure;
+AKp([brirL (stochasticIR_L.*fadeInFunction(Tmp, fs, onsL, stochasticIR_L, 'linear'))'],'t2d','fs',fs);
+legend('BRIR left ISM', 'BRIR left stochastic');
+
 %% conv signal with BRIR and play
 load('HpTFgenFilter.mat');
 [speech,speech_fs] = audioread('Sprache.wav');
@@ -72,8 +77,12 @@ p1 = audioplayer(speech, speech_fs);
    playblocking(p1);
 p2 = audioplayer(speech_room_HpFilter, speech_fs);
     playblocking(p2);
-    
-    
+
+%% save to workspace
+audiowrite('speechInRoomBinaural_noFadeIn.wav',speech_room,fs); 
+
+
+
 %% conv signal with RIR and play
 
 [speech,speech_fs] = audioread('Sprache.wav');
