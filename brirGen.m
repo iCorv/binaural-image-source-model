@@ -53,13 +53,13 @@ for l = -n1:n1
             rZ = 2*n*roomDim(3);
             for u = 0:1
                 ismPosRel(1) = (1-2*u)*sourcePos(1) + rX - receiverPos(1);
-                refl(:,1) = beta(:,1).^abs(u-l) .* beta(:,2).^abs(l);
+                refl(:,1) = (-beta(:,1)).^abs(u-l) .* (-beta(:,2)).^abs(l);
                 for v = 0:1
                     ismPosRel(2) = (1-2*v)*sourcePos(2) + rY - receiverPos(2);
-                    refl(:,2) = beta(:,3).^abs(v-m) .* beta(:,4).^abs(m);
+                    refl(:,2) = (-beta(:,3)).^abs(v-m) .* (-beta(:,4)).^abs(m);
                     for w = 0:1
                         ismPosRel(3) = (1-2*w)*sourcePos(3) + rZ - receiverPos(3);
-                        refl(:,3) = beta(:,5).^abs(w-n) .* beta(:,6).^abs(n);
+                        refl(:,3) = (-beta(:,5)).^abs(w-n) .* (-beta(:,6)).^abs(n);
                         % relative source-receiver distance
                         d = norm(ismPosRel);
                         % determine gain (d*cSamples -> back to time
