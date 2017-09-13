@@ -31,9 +31,16 @@ brirL_stochastic = brirL' + stochasticIR_L.* ...
 brirR_stochastic = brirR' + stochasticIR_R.* ...
     (fadeInFunction(mixingTime, fs, onsR, stochasticIR_R, mixMode).*energyFactorR);
 
+%AKf(8.89,7);
 figure;
-AKp([brirL (stochasticIR_L.*(fadeInFunction(mixingTime, fs, onsL, stochasticIR_L, mixMode).*energyFactorL))'],'t2d','fs',fs);
-legend('BRIR left ISM', 'BRIR left stochastic');
+AKp([brirL (stochasticIR_L.*(fadeInFunction(mixingTime, fs, onsL, stochasticIR_L, mixMode).*energyFactorL))'],'t2d','fs',fs,'x',[0 100],'labeling','on');
+%hold on;
+%ylabel('amplitude','FontSize',9,'Interpreter','latex');
+%xlabel('time in ms','FontSize',9,'Interpreter','latex');
+%ax = gca;
+%ax.FontSize = 9;
+%ax.TickLabelInterpreter = 'latex';
+legend({'image source model', 'stochastic reverberation'},'FontSize',12,'Interpreter','none');
 
 end
 

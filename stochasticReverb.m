@@ -25,7 +25,7 @@ for i = 1:length(fc)
 end
 
 % ---- coherence of binaural signals in a diffuse sound field ----
-% ear distance of 31.2cm
+% mic distance of 31.2cm
 w0 = 2*pi*550;
 % model the decreasing coherence for higher frequency due to the scattering
 w1 = 2*pi*2700;
@@ -47,6 +47,7 @@ H_alpha = sqrt(1-H_beta.^2);
 analyzed_impulseL_gamma = H_alpha' .* analyzed_impulseL + H_beta' .* analyzed_impulseR;
 analyzed_impulseR_gamma = H_alpha' .* analyzed_impulseR + H_beta' .* analyzed_impulseL;
 
+
 % Resynthesize filtered impulse response from above.
 [resynthesized_impulseL, synthesizer] = gfb_synthesizer_process(synthesizer, analyzed_impulseL_gamma);
 [resynthesized_impulseR, synthesizer] = gfb_synthesizer_process(synthesizer, analyzed_impulseR_gamma);
@@ -60,7 +61,7 @@ if(plotFlag)
      AKp(real(analyzed_impulseL)', 'm2d', 'c', 'cyc', 'fs', fs)
      title('AMT filterbank (magnitude response)')
     subplot(2,1,2)
-     AKp(resynthesized_impulse', 'm2d', 'c', 'cyc', 'fs', fs, 'dr', 20)
+     AKp(resynthesized_impulseL', 'm2d', 'c', 'cyc', 'fs', fs, 'dr', 20)
      title('AMT filterbank after summation (magnitude response)')
 end
 end

@@ -1,7 +1,7 @@
 function [ analyzer, synthesizer, fc ] = reconstructingFilterbank( fs )
 
 
-flow = 0;                   % Lowest center frequency in Hz;
+flow = 100;                   % Lowest center frequency in Hz;
 basef = 1000;               % Base center frequency in Hz;
 fhigh = fs/2;               % Highest center frequency in Hz;
 filters_per_ERBaud = 2;     % Filterband density on ERB scale;
