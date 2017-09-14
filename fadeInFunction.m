@@ -1,7 +1,11 @@
 function [ fadeIn ] = fadeInFunction( mixingTime, fs, onset, ir, mode )
 % mode:
-% 'var1' - direct fade-in at mixing time
-% 'var2' - 
+% 'var1' - direct at mixing time
+% 'var2' - halfway between onset and mixing time
+% 'var3' - from onset
+% 'var4' - onset + 1/3 amplitude
+% 'var5' - onset + 2/3 amplitude
+% 'var6' - full 
 %
 
 onset = round(onset);

@@ -1,6 +1,7 @@
 function [ brirL_stochastic, brirR_stochastic ] = mixModels( brirL, brirR, stochasticIR_L, stochasticIR_R, fs, mixingTime, mixMode )
 %
-%   
+%   mix ISM with diffuse reverberation using differen fade-in variations.
+%
 
 % onset
 onsL = AKonsetDetect(brirL);

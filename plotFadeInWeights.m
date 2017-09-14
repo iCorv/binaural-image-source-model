@@ -1,10 +1,10 @@
-%%
+%% plot fade-in weigts for all variations
 fs = 44100;
 % fake IR
 ir = ones(1,2000);
-
+% fake onset
 onset = 500;
-
+% fake mixing time
 mixingTime = 0.0272;
 
 var1 = fadeInFunction( mixingTime, fs, onset, ir, 'var1' );

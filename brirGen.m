@@ -23,8 +23,6 @@ function [ brirL, brirR, rir, beta ] = brirGen( c, fs, receiverPos, sourcePos, r
 
 if length(beta) == 1
     beta = reverbTime2reflectionCoeff(roomDim, beta, c);
-%else
-%    beta = beta(:);
 end
 
 % transform input from time to sample domain

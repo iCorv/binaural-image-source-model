@@ -1,5 +1,6 @@
-function [ alphas ] = roomAbsorption( )
+function [ alphas ] = roomAbsorption()
 
+% values taken from "Auralization - Michael Vorlaender" 
 % octave band frequencies: 125, 250, 500, 1k, 2k, 4k, 8k
 
 % Perforated veneered chipboard, 50 mm, 1 mm holes, 3 mm spacing, 9% hole surface ratio, 150 mm cavity filled with 30 mm mineral wool
